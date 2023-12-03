@@ -9,10 +9,10 @@ using namespace std;
 int main() {
     vector<Element> elements;
 
-    std::cout << "Enter elements one by one with their characteristics: start node, end node, value, name." << std::endl;
-    std::cout << "Or 'exit' to finish input." << std::endl;
+    cout << "Enter elements one by one with their characteristics: start node, end node, value, name." << endl;
+    cout << "Or 'exit' to finish input." << endl;
 
-    while (true) {
+    for (int i = 0; i<2; i++){
         string input;
         ElementType elementType;
         int startNode, endNode;
@@ -32,19 +32,19 @@ int main() {
             continue;
         }
 
-        std::cout << "Enter start node: ";
+        cout << "Enter start node: ";
         cin >> startNode;
         cin.ignore();
 
-        std::cout << "Enter end node: ";
+        cout << "Enter end node: ";
         cin >> endNode;
         cin.ignore();
 
-        std::cout << "Enter value: ";
+        cout << "Enter value: ";
         cin >> value;
         cin.ignore();
 
-        std::cout << "Enter element name: ";
+        cout << "Enter element name: ";
         getline(cin, name);
 
         Element element(elementType, startNode, endNode, value, name);
@@ -52,11 +52,11 @@ int main() {
     }
 
     for (const auto& elem : elements) {
-        std::cout << "\nElement Type: " << static_cast<int>(elem.getType()) << std::endl;
-        std::cout << "Start Node: " << elem.getStartNode() << std::endl;
-        std::cout << "End Node: " << elem.getEndNode() << std::endl;
-        std::cout << "Value: " << elem.getValue() << std::endl;
-        std::cout << "Name: " << elem.getName() << std::endl;
+        cout << "\nElement Type: " << static_cast<int>(elem.getType()) << endl;
+        cout << "Start Node: " << elem.getStartNode() << endl;
+        cout << "End Node: " << elem.getEndNode() << endl;
+        cout << "Value: " << elem.getValue() << endl;
+        cout << "Name: " << elem.getName() << endl;
     }
 
     return 0;
