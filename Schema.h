@@ -116,7 +116,7 @@ public:
         for (int i=0; i<l_count; i++) insert_katushka_matrix(el_katush[i], i);
         for (int i=0; i<r_count; i++) insert_resistor_matrix(el_resist[i], i);
         for (int i=0; i<e_count; i++) insert_eds_matrix(el_eds[i], i);
-        for (int i=0; i<i_count; i++) insert_i_matrix(el_i[i], i);
+        // for (int i=0; i<i_count; i++) insert_i_vector(el_i[i], i);
     };
 
     void get_matrix(){
@@ -135,13 +135,14 @@ public:
         J[offset_u + i][offset_u + i] += 1;
         int start = condensator.getStartNode();
         int finish = condensator.getEndNode();
+        float c = condensator.getValue();
         if (start != 0){
             J[offset_u + i][offset_n + start - 1] -= 1;
-            J[offset_n + start - 1][i] += condensator.getValue();
+            J[offset_n + start - 1][i] += c;
         }
         if (finish != 0){
             J[offset_u + i][offset_n + finish - 1] += 1;
-            J[offset_n + finish - 1][i] -= condensator.getValue();
+            J[offset_n + finish - 1][i] -= c;
         }            
     };
 
@@ -167,7 +168,16 @@ public:
 
 
     void insert_resistor_matrix(Element resistor, int i){
-        
+        int start = resistor.getStartNode();
+        int finish = resistor.getEndNode();  
+        float r = resistor.getValue();
+        if (start != 0) J[offset_n + start - 1][offset_n + start - 1] += 1/r;
+        if (finish != 0) J[offset_n + finish - 1][offset_n + finish - 1] += 1/r;
+        if (start != 0 && finish != 0){
+            J[offset_n + finish - 1][offset_n + start - 1] -= 1/r;
+            J[offset_n + start - 1][offset_n + finish - 1] -= 1/r;
+        }  
+
     };
 
 
