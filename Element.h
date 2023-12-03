@@ -11,7 +11,7 @@ private:
     ElementType type;
     int startNode;
     int endNode;
-    double value;
+    float value;
     std::string name;
 
 public:
