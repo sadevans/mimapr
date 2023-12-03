@@ -11,11 +11,11 @@ private:
     ElementType type;
     int startNode;
     int endNode;
-    double value;
+    float value;
     std::string name;
 
 public:
-    Element(ElementType elementType, int start, int end, double val, const std::string& elemName)
+    Element(ElementType elementType, int start, int end, float val, const std::string& elemName)
         : type(elementType), startNode(start), endNode(end), value(val), name(elemName) {}
 
     ElementType getType() const {
@@ -33,7 +33,7 @@ public:
     }
 
 
-    double getValue() const {
+    float getValue() const {
         return value;
     }
 

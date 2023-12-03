@@ -122,10 +122,20 @@ class Schema {
             offset_e = 2 * (c_count + l_count) + n_count;
 
             for (int i = 0; i < c_count; i++)
-                insert_condencator(c_elements[i], i);
+                insert_condencator_matrix(c_elements[i], i);
+
+            for (int i = 0; i < l_count; i++)
+                insert_katushka_matrix(c_elements[i], i); 
+
+            for (int i = 0; i < r_count; i++)
+                insert_resistor_matrix(c_elements[i], i);
+
+            for (int i = 0; i < e_count; i++)
+                insert_eds_matrix(c_elements[i], i);                             
         };
 
-        void insert_condencator(Element condencator, int i){
+
+        void insert_condencator_matrix(Element condencator, int i){
             A[i][i] += 1;
             A[i][offset_u + i] -= 1/delta_t;
             A[offset_u + i][offset_u + i] += 1;
@@ -133,19 +143,58 @@ class Schema {
             int finish = condencator.getEndNode();
             if (start != 0){
                 A[offset_u + i][offset_n + start - 1] -= 1;
-                
+                A[offset_n + start - 1][i] += condencator.getValue();
             }
-
+            if (finish != 0){
+                A[offset_u + i][offset_n + finish - 1] += 1;
+                A[offset_n + finish - 1][i] -= condencator.getValue();
+            }            
         }
-        void insert_katushka(Element katushka){
 
-        }
-        void insert_resistor(Element resistor){
 
-        }
-        void insert_eds(Element eds){
+        void insert_katushka_matrix(Element katushka, int i){
+            A[offset_di + i][offset_di + i] += 1;
+            A[offset_di + i][offset_i + i] += (-1/delta_t);
+            A[offset_i + i][offset_di + i] += katushka.getValue();
+            int start = katushka.getStartNode();
+            int finish = katushka.getEndNode();
+            if (start != 0) {
+                A[offset_i + i][offset_n + start - 1] -= 1;
+                A[offset_n + start - 1][offset_i + i] += 1;
+            }
+            if (finish != 0) {
+                A[offset_i + i][offset_n + finish - 1] += 1;
+                A[offset_n + finish - 1][offset_i + i] -= 1;
+            }
+        };
 
+        void insert_resistor_matrix(Element resistor, int i){
+            int start = resistor.getStartNode();
+            int finish = resistor.getEndNode();  
+            float r = resistor.getValue();
+            if (start != 0) A[offset_n + start - 1][offset_n + start - 1] += 1/r;
+            if (finish != 0) A[offset_n + finish - 1][offset_n + finish - 1] += 1/r;
+            if (start != 0 && finish != 0){
+                A[offset_n + finish - 1][offset_n + start - 1] -= 1/r;
+                A[offset_n + start - 1][offset_n + finish - 1] -= 1/r;
+            }  
         }
+
+
+        void insert_eds_matrix(Element eds, int i){
+            int start = eds.getStartNode();
+            int end = eds.getEndNode();
+            if (start != 0) {
+                A[offset_n + start - 1][offset_e] += 1;
+                A[offset_e][offset_n + start - 1] += 1;
+            }
+            if (end != 0) {
+                A[offset_n + end - 1][offset_e] -= 1;
+                A[offset_e][offset_n + end - 1] -= 1;
+            }
+        };
+
+
         void insert_i(Element i){
 
         }
