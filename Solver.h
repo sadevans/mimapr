@@ -51,12 +51,18 @@ public:
 
     void point_method() {
         float time = 0;
+        schema->init_dx();
         while (time < t){
             int newton_iteration = 0;
             bool newton_convergence = true;
             while (newton_convergence){
                 schema->init_matrix_vector();
-                gauss();
+                schema->print_matrix();
+                schema->print_vector();
+                return;
+                // gauss();
+
+
             }
         }
     }

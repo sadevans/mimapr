@@ -21,20 +21,20 @@ private:
 
 
     // current values
-    vector<float> dU;
-    vector<float> U;
-    vector<float> dIl;
-    vector<float> Il;
-    vector<float> phi;
-    vector<float> Ie;
+    // vector<float> dU;
+    // vector<float> U;
+    // vector<float> dIl;
+    // vector<float> Il;
+    // vector<float> phi;
+    // vector<float> Ie;
 
-    // previous values
-    vector<float> dU_prev;
-    vector<float> U_prev;
-    vector<float> dIl_prev;
-    vector<float> Il_prev;
-    vector<float> phi_prev;
-    vector<float> Ie_prev;
+    // // previous values
+    // vector<float> dU_prev;
+    // vector<float> U_prev;
+    // vector<float> dIl_prev;
+    // vector<float> Il_prev;
+    // vector<float> phi_prev;
+    // vector<float> Ie_prev;
 
     // counts
     int c_count; // impact on dimension
@@ -66,6 +66,8 @@ private:
 
     vector<float> I;
     vector<vector<float>> J;
+    vector<float> dx;
+    vector<float> dx_prev; 
     
 public:
     Schema(){};
@@ -73,28 +75,21 @@ public:
     void add_element(Element elem){
         elements.push_back(elem);
 
-        if (elem.getType() == ElementType::C) {el_cond.push_back(elem); c_count += 1; dU.push_back(0); dU_prev.push_back(0);
-                                                    U.push_back(0); U_prev.push_back(0);}
-        if (elem.getType() == ElementType::L) {el_katush.push_back(elem); l_count += 1; dIl.push_back(0); dIl_prev.push_back(0);
-                                                    Il.push_back(0); Il_prev.push_back(0);}
+        if (elem.getType() == ElementType::C) {el_cond.push_back(elem); c_count += 1;}
+        if (elem.getType() == ElementType::L) {el_katush.push_back(elem); l_count += 1;}
         if (elem.getType() == ElementType::R) {el_resist.push_back(elem); r_count += 1;}
-        if (elem.getType() == ElementType::E) {el_eds.push_back(elem); e_count += 1; Ie.push_back(0); Ie_prev.push_back(0);}
+        if (elem.getType() == ElementType::E) {el_eds.push_back(elem); e_count += 1;}
         if (elem.getType() == ElementType::I) {el_i.push_back(elem); i_count += 1;}
         if (elem.getType() == ElementType::Id) {el_id.push_back(elem); id_count += 1;}
 
 
         
-        if (n_count == 0) {phi.push_back(0); phi_prev.push_back(0);}
         if (elem.getStartNode() > n_count){
             n_count = elem.getStartNode();
-            phi.push_back(0);
-            phi_prev.push_back(0);
         }
 
         if (elem.getEndNode() > n_count){
             n_count = elem.getEndNode();
-            phi.push_back(0);
-            phi_prev.push_back(0);
         }
 
         all_count += 1;
@@ -103,6 +98,13 @@ public:
 
     };
 
+
+    void init_dx(){
+        for (int i=0; i<dimension; i++){
+            dx.push_back(0);
+            dx_prev.push_back(0);
+        }
+    }
 
     void get_elements(){
         for (const auto& elem : elements) {
@@ -194,12 +196,6 @@ public:
     };
 
 
-    void get_phi(){
-        for (int i=0; i<phi.size(); i++)
-            cout << phi[i] << " ";
-        cout << endl;
-    };
-
     void insert_condensator_matrix(Element condensator, int i){
         J[i][i] += 1;
         J[i][offset_u + i] -= 1/delta_t;
@@ -221,20 +217,22 @@ public:
         int start = condensator.getStartNode();
         int end = condensator.getEndNode();
         float C = condensator.getValue();
-        I[i] += dU[i] - (U[i] - U_prev[i])/delta_t;
+        // I[i] += dU[i] - (U[i] - U_prev[i])/delta_t;
+        I[i] += dx[offset_du + i] - (dx[offset_u + i] - dx_prev[offset_u + i])/delta_t;
+
         
         if (start != 0 && end != 0){
-            I[offset_u + i] += U[i] - (phi[start - 1] - phi[end - 1]);
+            I[offset_u + i] += dx[offset_u + i] - (dx[offset_n + start - 1] - dx[offset_n + end - 1]);
         }
         if (start != 0 && end == 0){
-            I[offset_u + i] += U[i] - (phi[start - 1]);
+            I[offset_u + i] += dx[offset_u + i] - (dx[offset_n + start - 1]);
         }
         if (start == 0 && end != 0){
-            I[offset_u + i] += U[i] - (-phi[end - 1]);
+            I[offset_u + i] += dx[offset_u + i] - (-dx[offset_n + end - 1]);
         }
 
-        if (start != 0) {I[offset_n + start - 1] += C*dU[i];}
-        if (end != 0) {I[offset_n + end - 1] -= C*dU[i];}
+        if (start != 0) {I[offset_n + start - 1] += C*dx[offset_du + i];}
+        if (end != 0) {I[offset_n + end - 1] -= C*dx[offset_du + i];}
         
     };
 
@@ -264,14 +262,14 @@ public:
         int end = katushka.getEndNode();
         float L = katushka.getValue();
 
-        I[offset_di + i] += dIl[i] - (Il[i] - Il_prev[i])/delta_t;
+        I[offset_di + i] += dx[offset_di + i] - (dx[offset_i + i] - dx_prev[offset_i + i])/delta_t;
 
-        if (start != 0 && end != 0){I[offset_i + i] += L*dIl[i] - (phi[start -1] - phi[end - 1]);}
-        if (start != 0 && end == 0){I[offset_i + i] += L*dIl[i] - (phi[start -1]);}
-        if (start == 0 && end != 0){I[offset_i + i] += L*dIl[i] - (-phi[end - 1]);}
+        if (start != 0 && end != 0){I[offset_i + i] += L*dx[offset_di + i] - (dx[offset_n + start -1] - dx[offset_n + end - 1]);}
+        if (start != 0 && end == 0){I[offset_i + i] += L*dx[offset_di + i] - (dx[offset_n + start -1]);}
+        if (start == 0 && end != 0){I[offset_i + i] += L*dx[offset_di + i] - (-dx[offset_n + end - 1]);}
 
-        if (start != 0) {I[offset_n + start - 1] += dIl[i];}
-        if (end != 0) {I[offset_n + end - 1] -= dIl[i];}
+        if (start != 0) {I[offset_n + start - 1] += dx[offset_di + i];}
+        if (end != 0) {I[offset_n + end - 1] -= dx[offset_di + i];}
     };
 
 
@@ -294,16 +292,16 @@ public:
         
         
         if (start != 0 && end != 0){
-            I[offset_n + start - 1] += (phi[start - 1] - phi[end - 1])/R;
-            I[offset_n + end - 1] -= (phi[start - 1] - phi[end - 1])/R;
+            I[offset_n + start - 1] += (dx[offset_n + start - 1] - dx[offset_n + end - 1])/R;
+            I[offset_n + end - 1] -= (dx[offset_n + start - 1] - dx[offset_n + end - 1])/R;
             }
         if (start != 0 && end == 0){
-            I[offset_n + start - 1] += (phi[start - 1])/R;
+            I[offset_n + start - 1] += (dx[offset_n + start - 1])/R;
             // I[offset_n + end - 1] -= (phi[start - 1])/R;
             }
         if (start == 0 && end != 0){
             // I[offset_n + start - 1] -= (phi[end - 1])/R;
-            I[offset_n + end - 1] += (phi[end - 1])/R;
+            I[offset_n + end - 1] += (dx[offset_n + end - 1])/R;
             }
     };
 
@@ -327,15 +325,15 @@ public:
         float E = eds.getValue();
 
         if (start != 0) {
-            I[offset_n + start - 1] += Ie[i];
+            I[offset_n + start - 1] += dx[offset_e + i];
         }
         if (end != 0) {
-            I[offset_n + end - 1] -= Ie[i];
+            I[offset_n + end - 1] -= dx[offset_e + i];
         }
 
-        if (start != 0 && end != 0){I[offset_e] += (phi[start - 1] - phi[end - 1]) - E;}
-        if (start != 0 && end == 0){I[offset_e] += phi[start - 1] - E;}
-        if (start == 0 && end != 0){I[offset_e] += (-phi[end - 1]) - E;}
+        if (start != 0 && end != 0){I[offset_e] += (dx[offset_n + start - 1] - dx[offset_n + end - 1]) - E;}
+        if (start != 0 && end == 0){I[offset_e] += dx[offset_n + start - 1] - E;}
+        if (start == 0 && end != 0){I[offset_e] += (-dx[offset_n + end - 1]) - E;}
     };
 
 
@@ -343,11 +341,11 @@ public:
         int start = el_id.getStartNode();
         int end = el_id.getEndNode();
 
-        if (start != 0) {J[offset_n + start - 1][offset_n + start - 1] += (It*exp(phi[start-1] - phi[end -1]))/(m*phi_t);}
-        if (end != 0) {J[offset_n + end - 1][offset_n + end - 1] += (It*exp(phi[start-1] - phi[end -1]))/(m*phi_t);}
+        if (start != 0) {J[offset_n + start - 1][offset_n + start - 1] += (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);}
+        if (end != 0) {J[offset_n + end - 1][offset_n + end - 1] += (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);}
         if (start != 0 && end != 0){
-            J[offset_n + end - 1][offset_n + start - 1] -= (It*exp(phi[start-1] - phi[end -1]))/(m*phi_t);
-            J[offset_n + start - 1][offset_n + end - 1] -= (It*exp(phi[start-1] - phi[end -1]))/(m*phi_t);
+            J[offset_n + end - 1][offset_n + start - 1] -= (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);
+            J[offset_n + start - 1][offset_n + end - 1] -= (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);
         } 
     };
 
@@ -356,12 +354,12 @@ public:
         int end = el_id.getEndNode();
         // float E = eds.getValue();
         if (start != 0 && end != 0){
-            I[offset_n + start - 1] += (It*(exp((phi[start-1] - phi[end -1])/(m*phi_t)) - 1));
-            I[offset_n + end - 1] -= (It*(exp((phi[start-1] - phi[end -1])/(m*phi_t)) - 1));
+            I[offset_n + start - 1] += (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));
+            I[offset_n + end - 1] -= (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));
 
             }
-        if (start != 0 && end == 0){I[offset_n + start - 1] += (It*(exp((phi[start-1])/(m*phi_t)) - 1));}
-        if (start == 0 && end != 0){I[offset_n + end - 1] -= (It*(exp((phi[start-1] - phi[end -1])/(m*phi_t)) - 1));}
+        if (start != 0 && end == 0){I[offset_n + start - 1] += (It*(exp((dx[offset_n + start-1])/(m*phi_t)) - 1));}
+        if (start == 0 && end != 0){I[offset_n + end - 1] -= (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));}
     };
 
     void insert_i_vector(Element el_i, int i){
