@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include "Element.h"
-#define de
 using namespace std;
 
 class Schema {
