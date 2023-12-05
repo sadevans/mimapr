@@ -9,15 +9,21 @@ using namespace std;
 
 class Solver {
 private:
-
     Schema* schema;
-    int n_max = 7;
-    float epsilon = 0.001;
-
+    int n_max;
+    float epsilon;
+    float start_t;
+    float min_t;
+    float max_t;
+    float t;
 public:
-    Solver(){};
+    Solver(Schema* _schema, int _n_max = 7, float _epsilon = 1e-7, 
+        float _start_t = 1e-7, float _min_t = 1e-15, 
+        float _max_t = 1e-6, float _t = 1e-3):
+    schema(_schema), n_max(_n_max), epsilon(_epsilon), start_t(_start_t), min_t(_min_t), max_t(_max_t), t(_t){};
 
-    void Gauss() { 
+    
+    void gauss() { 
         long int i, j, k;
         int N = schema->get_dimension();
         double diagonalElement;
@@ -41,6 +47,19 @@ public:
             for (j = i + 1; j < N; j++)
                 I[i] -= matrix[i][j] * I[j];
     };
+
+
+    void point_method() {
+        float time = 0;
+        while (time < t){
+            int newton_iteration = 0;
+            bool newton_convergence = true;
+            while (newton_convergence){
+                schema->init_matrix_vector();
+                gauss();
+            }
+        }
+    }
 
 
 

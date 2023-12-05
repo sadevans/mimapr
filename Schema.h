@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <vector>
 #include <string>
@@ -24,16 +25,16 @@ private:
     vector<float> U;
     vector<float> dIl;
     vector<float> Il;
-    vector<float> Ie;
     vector<float> phi;
+    vector<float> Ie;
 
     // previous values
+    vector<float> dU_prev;
+    vector<float> U_prev;
+    vector<float> dIl_prev;
+    vector<float> Il_prev;
     vector<float> phi_prev;
     vector<float> Ie_prev;
-    vector<float> Il_prev;
-    vector<float> dIl_prev;
-    vector<float> U_prev;
-    vector<float> dU_prev;
 
     // counts
     int c_count; // impact on dimension
@@ -135,9 +136,9 @@ public:
 
 
     void init_matrix_vector(){
-        for (int i=0; i<dimension; i++){
+        for (int i = 0; i < dimension; i++){
             vector<float> temp;
-            for (int j=0; j<dimension; j++)
+            for (int j = 0; j < dimension; j++)
                 temp.push_back(0);
             J.push_back(temp);
             I.push_back(0);
@@ -150,11 +151,11 @@ public:
         offset_n = 2*(c_count + l_count);
         offset_e = 2*(c_count + l_count) + n_count;
 
-        for (int i=0; i<c_count; i++) {insert_condensator_matrix(el_cond[i], i); insert_condensator_vector(el_cond[i], i);}
-        for (int i=0; i<l_count; i++) {insert_katushka_matrix(el_katush[i], i); insert_katushka_vector(el_katush[i], i);}
-        for (int i=0; i<r_count; i++) {insert_resistor_matrix(el_resist[i], i); insert_resistor_vector(el_resist[i], i);}
-        for (int i=0; i<e_count; i++) {insert_eds_matrix(el_eds[i], i); insert_eds_vector(el_eds[i], i);}
-        for (int i=0; i<i_count; i++) {insert_i_vector(el_i[i], i);} // ordinary I
+        for (int i=0; i<c_count;  i++) {insert_condensator_matrix(el_cond[i], i); insert_condensator_vector(el_cond[i], i);}
+        for (int i=0; i<l_count;  i++) {insert_katushka_matrix(el_katush[i], i); insert_katushka_vector(el_katush[i], i);}
+        for (int i=0; i<r_count;  i++) {insert_resistor_matrix(el_resist[i], i); insert_resistor_vector(el_resist[i], i);}
+        for (int i=0; i<e_count;  i++) {insert_eds_matrix(el_eds[i], i); insert_eds_vector(el_eds[i], i);}
+        for (int i=0; i<i_count;  i++) {insert_i_vector(el_i[i], i);} // ordinary I
         for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);} // diode I
 
     // make -I
@@ -170,7 +171,7 @@ public:
     void print_matrix(){
         for (int i=0; i<dimension; i++){
             for (int j=0; j<dimension; j++){
-                cout << J[i][j] << " ";
+                cout << setw(6) << J[i][j] << " ";
             }
             cout << endl;
         }
