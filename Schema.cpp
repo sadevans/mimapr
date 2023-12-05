@@ -51,9 +51,9 @@ int main() {
 
     schema->init_matrix_vector();
     cout << schema->get_dimension() << endl;
-    schema->get_matrix();
+    schema->print_matrix();
     cout << endl;
-    schema->get_vector();
+    schema->print_vector();
 
     return 0;
 }

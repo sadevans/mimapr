@@ -157,7 +157,15 @@ public:
         for (int i=0; i<i_count; i++) {insert_i_vector(el_i[i], i);} // ordinary I
         for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);} // diode I
 
+    // make -I
+    minus_vector();
     };
+
+    void minus_vector() {
+        for (int i = 0; i < dimension; i++) {
+            I[i] *= -1;
+        }
+    }
 
     void print_matrix(){
         for (int i=0; i<dimension; i++){
