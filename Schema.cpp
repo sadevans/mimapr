@@ -29,6 +29,7 @@ int main() {
     Element* r5 = new Element(ElementType::R, 0, 5, 2, "R5");
     Element* l1 = new Element(ElementType::L, 0, 5, 0.2, "L1");
 
+    // my schema
     schema->add_element(*e1);
     schema->add_element(*c1);
     schema->add_element(*r1);
@@ -46,14 +47,13 @@ int main() {
     schema->get_elements();
 
     cout << schema->getNCount() << endl;
+    schema->getCounts();
+
     schema->init_matrix_vector();
     cout << schema->get_dimension() << endl;
     schema->get_matrix();
     cout << endl;
     schema->get_vector();
-
-
-    // schema->get_phi();
 
     return 0;
 }

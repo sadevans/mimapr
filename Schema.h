@@ -88,8 +88,8 @@ public:
             n_count = elem.getStartNode();
             phi.push_back(0);
             phi_prev.push_back(0);
-
         }
+
         if (elem.getEndNode() > n_count){
             n_count = elem.getEndNode();
             phi.push_back(0);
@@ -105,13 +105,14 @@ public:
 
     void get_elements(){
         for (const auto& elem : elements) {
-        cout << "\nElement Type: " << static_cast<int>(elem.getType()) << endl;
-        cout << "Start Node: " << elem.getStartNode() << endl;
-        cout << "End Node: " << elem.getEndNode() << endl;
-        cout << "Value: " << elem.getValue() << endl;
-        cout << "Name: " << elem.getName() << endl;
+            cout << "\nElement Type: " << static_cast<int>(elem.getType()) << endl;
+            cout << "Start Node: " << elem.getStartNode() << endl;
+            cout << "End Node: " << elem.getEndNode() << endl;
+            cout << "Value: " << elem.getValue() << endl;
+            cout << "Name: " << elem.getName() << endl;
         }
     };
+
 
     int getNCount() const {
         return n_count;
@@ -153,12 +154,12 @@ public:
         for (int i=0; i<l_count; i++) {insert_katushka_matrix(el_katush[i], i); insert_katushka_vector(el_katush[i], i);}
         for (int i=0; i<r_count; i++) {insert_resistor_matrix(el_resist[i], i); insert_resistor_vector(el_resist[i], i);}
         for (int i=0; i<e_count; i++) {insert_eds_matrix(el_eds[i], i); insert_eds_vector(el_eds[i], i);}
-        for (int i=0; i<i_count; i++) {insert_i_vector(el_i[i], i);}
-        for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);}
+        for (int i=0; i<i_count; i++) {insert_i_vector(el_i[i], i);} // ordinary I
+        for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);} // diode I
 
     };
 
-    void get_matrix(){
+    void print_matrix(){
         for (int i=0; i<dimension; i++){
             for (int j=0; j<dimension; j++){
                 cout << J[i][j] << " ";
@@ -167,11 +168,22 @@ public:
         }
     };
 
-    void get_vector(){
+    void print_vector(){
         for (int i=0; i<dimension; i++)
             cout << I[i] << " ";
         cout << endl;
     };
+
+
+    vector<vector<float>> get_matrix(){
+        return J;
+    };
+
+
+    vector<float> get_vector(){
+        return I;
+    };
+
 
     void get_phi(){
         for (int i=0; i<phi.size(); i++)
@@ -264,7 +276,6 @@ public:
             J[offset_n + end - 1][offset_n + start - 1] -= 1/r;
             J[offset_n + start - 1][offset_n + end - 1] -= 1/r;
         }  
-
     };
 
     void insert_resistor_vector(Element resistor, int i){
