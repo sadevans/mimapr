@@ -51,13 +51,12 @@ int main() {
     cout << schema->getNCount() << endl;
     schema->getCounts();
 
-    schema->init_matrix_vector();
-    cout << schema->get_dimension() << endl;
-    schema->print_matrix();
-    cout << endl;
-    schema->print_vector();
+    // schema->init_matrix_vector();
+    // cout << schema->get_dimension() << endl;
+    // schema->print_matrix();
+    // cout << endl;
+    // schema->print_vector();
     
-
     Solver* solver = new Solver(schema);
     solver->point_method();
     return 0;

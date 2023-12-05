@@ -46,12 +46,18 @@ public:
         for (i = N - 2; i >= 0; i--) //Обратный ход
             for (j = i + 1; j < N; j++)
                 I[i] -= matrix[i][j] * I[j];
+
+        for (int i = 0; i<schema->get_dimension();i++){
+            cout << I[i] << " ";
+        }
+        cout << endl;
     };
 
 
     void point_method() {
         float time = 0;
         schema->init_dx();
+        schema->print_dx();
         while (time < t){
             int newton_iteration = 0;
             bool newton_convergence = true;
@@ -59,12 +65,13 @@ public:
                 schema->init_matrix_vector();
                 schema->print_matrix();
                 schema->print_vector();
+                // return;
+                gauss();
                 return;
-                // gauss();
-
 
             }
         }
+
     }
 
 

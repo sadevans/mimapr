@@ -185,6 +185,12 @@ public:
         cout << endl;
     };
 
+    void print_dx(){
+        for (int i=0; i<dimension; i++)
+            cout << dx[i] << " ";
+        cout << endl;
+    };
+
 
     vector<vector<float>> get_matrix(){
         return J;
