@@ -4,7 +4,7 @@
 #include <string>
 using namespace std;
 
-enum class ElementType { E, C, R, L, I };
+enum class ElementType { E, C, R, L, I, Id };
 
 class Element {
 private:
