@@ -23,7 +23,7 @@ public:
     schema(_schema), n_max(_n_max), epsilon(_epsilon), start_t(_start_t), min_t(_min_t), max_t(_max_t), t(_t){};
 
     
-    void gauss() { 
+    vector<float> gauss() { 
         long int i, j, k;
         int N = schema->get_dimension();
         double diagonalElement;
@@ -51,13 +51,14 @@ public:
             cout << I[i] << " ";
         }
         cout << endl;
+
+        return I;
     };
 
 
     void point_method() {
         float time = 0;
         schema->init_dx();
-        schema->print_dx();
         while (time < t){
             int newton_iteration = 0;
             bool newton_convergence = true;
@@ -66,7 +67,8 @@ public:
                 schema->print_matrix();
                 schema->print_vector();
                 // return;
-                gauss();
+                vector<float> new_dx = gauss();
+                schema->change_vectors(new_dx);
                 return;
 
             }
