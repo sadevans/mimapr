@@ -114,6 +114,7 @@ public:
             cout << "Value: " << elem.getValue() << endl;
             cout << "Name: " << elem.getName() << endl;
         }
+        cout << endl;
     };
 
 
@@ -128,7 +129,7 @@ public:
         cout << "Count E: " << e_count << endl;
         cout << "Count I: " << i_count << endl;
         cout << "Count Id: " << id_count << endl;
-
+        cout << endl;
     };
 
 
@@ -171,18 +172,22 @@ public:
     }
 
     void print_matrix(){
+        cout << "Jacobian matrix:" << endl;
         for (int i=0; i<dimension; i++){
             for (int j=0; j<dimension; j++){
                 cout << setw(6) << J[i][j] << " ";
             }
             cout << endl;
         }
+        cout << endl;
     };
 
     void print_vector(){
         for (int i=0; i<dimension; i++)
             cout << I[i] << " ";
         cout << endl;
+        cout << endl;
+
     };
 
     void print_dx(){
@@ -199,6 +204,25 @@ public:
 
     vector<float> get_vector(){
         return I;
+    };
+
+
+    void change_vectors(vector <float> new_dx){
+        // cout << "dx now" << endl;
+        for (int i=0; i<dimension;i++){
+            dx_prev[i] = dx[i];
+            dx[i] += new_dx[i];
+            // cout << dx[i] << " ";
+        }
+        // cout << endl;
+        // cout << "dx prev" << endl;
+
+        // for (int i=0; i<dimension;i++){
+        //     cout << dx_prev[i] << " ";
+        // }
+        // cout << endl;
+
+
     };
 
 
@@ -223,10 +247,8 @@ public:
         int start = condensator.getStartNode();
         int end = condensator.getEndNode();
         float C = condensator.getValue();
-        // I[i] += dU[i] - (U[i] - U_prev[i])/delta_t;
         I[i] += dx[offset_du + i] - (dx[offset_u + i] - dx_prev[offset_u + i])/delta_t;
 
-        
         if (start != 0 && end != 0){
             I[offset_u + i] += dx[offset_u + i] - (dx[offset_n + start - 1] - dx[offset_n + end - 1]);
         }
