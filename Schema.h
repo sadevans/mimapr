@@ -207,10 +207,10 @@ public:
     };
 
 
-    void change_vectors(vector <float> new_dx){
+    void change_dx_vector(vector <float> new_dx){
         // cout << "dx now" << endl;
         for (int i=0; i<dimension;i++){
-            dx_prev[i] = dx[i];
+            // dx_prev[i] = dx[i];
             dx[i] += new_dx[i];
             // cout << dx[i] << " ";
         }

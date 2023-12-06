@@ -68,7 +68,7 @@ public:
                 schema->print_vector();
                 // return;
                 vector<float> new_dx = gauss();
-                schema->change_vectors(new_dx);
+                schema->change_dx_vector(new_dx);
                 return;
 
             }
