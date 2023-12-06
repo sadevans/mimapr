@@ -208,21 +208,16 @@ public:
 
 
     void change_dx_vector(vector <float> new_dx){
-        // cout << "dx now" << endl;
         for (int i=0; i<dimension;i++){
-            // dx_prev[i] = dx[i];
             dx[i] += new_dx[i];
-            // cout << dx[i] << " ";
         }
-        // cout << endl;
-        // cout << "dx prev" << endl;
-
-        // for (int i=0; i<dimension;i++){
-        //     cout << dx_prev[i] << " ";
-        // }
-        // cout << endl;
+    };
 
 
+    void change_dx_prev_vector(vector <float> dx_){
+        for (int i=0; i<dimension;i++){
+            dx_prev[i] += dx_[i];
+        }
     };
 
 

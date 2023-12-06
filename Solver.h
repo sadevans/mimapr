@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <cmath>
 #include "Schema.h"
 using namespace std;
 
@@ -22,6 +23,12 @@ public:
         float _max_t = 1e-6, float _t = 1e-3):
     schema(_schema), n_max(_n_max), epsilon(_epsilon), start_t(_start_t), min_t(_min_t), max_t(_max_t), t(_t){};
 
+    float max_elem(vector<float> vect, int dim) {
+        float result = 0;
+        for (int i = 0; i < dim; i++)
+            if (result < abs(vect[i])) result = abs(vect[i]);
+        return result;
+    };
     
     vector<float> gauss() { 
         long int i, j, k;
@@ -69,6 +76,7 @@ public:
                 // return;
                 vector<float> new_dx = gauss();
                 schema->change_dx_vector(new_dx);
+                newton_iteration += 1;
                 return;
 
             }
