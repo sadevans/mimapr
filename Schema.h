@@ -20,22 +20,6 @@ private:
     vector<Element> el_id;
 
 
-    // current values
-    // vector<float> dU;
-    // vector<float> U;
-    // vector<float> dIl;
-    // vector<float> Il;
-    // vector<float> phi;
-    // vector<float> Ie;
-
-    // // previous values
-    // vector<float> dU_prev;
-    // vector<float> U_prev;
-    // vector<float> dIl_prev;
-    // vector<float> Il_prev;
-    // vector<float> phi_prev;
-    // vector<float> Ie_prev;
-
     // counts
     int c_count; // impact on dimension
     int l_count; // impact on dimension
@@ -57,17 +41,18 @@ private:
     // dimension of the Jacobian matrix and vectors
     int dimension;
 
-    float delta_t = 0.0001;
-
+    double delta_t = 0.0001;
+    double prev_delta_t = 0.0001;
     // diode parameters
-    float It = 2;
-    float m = 2;
-    float phi_t = 1;
+    double It = 2;
+    double m = 2;
+    double phi_t = 1;
 
-    vector<float> I;
-    vector<vector<float>> J;
-    vector<float> dx;
-    vector<float> dx_prev; 
+    vector<double> I;
+    vector<vector<double>> J;
+    vector<double> dx;
+    vector<double> dx_prev;
+    vector<double> extra_phi;
     
 public:
     Schema(){};
@@ -100,10 +85,12 @@ public:
 
 
     void init_dx(){
-        for (int i=0; i<dimension; i++){
+        for (int i = 0; i < dimension; i++){
             dx.push_back(0);
             dx_prev.push_back(0);
         }
+        for (int i = 0; i < n_count; i++)
+            extra_phi.push_back(0);
     }
 
     void get_elements(){
@@ -140,7 +127,7 @@ public:
 
     void init_matrix_vector(){
         for (int i = 0; i < dimension; i++){
-            vector<float> temp;
+            vector<double> temp;
             for (int j = 0; j < dimension; j++)
                 temp.push_back(0);
             J.push_back(temp);
@@ -162,7 +149,7 @@ public:
         for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);} // diode I
 
     // make -I
-    minus_vector();
+        minus_vector();
     };
 
     void minus_vector() {
@@ -197,28 +184,61 @@ public:
     };
 
 
-    vector<vector<float>> get_matrix(){
+    vector<vector<double>> get_matrix(){
         return J;
     };
 
 
-    vector<float> get_vector(){
+    vector<double> get_vector(){
         return I;
     };
 
 
-    void change_dx_vector(vector <float> new_dx){
+    void change_dx_vector(vector <double> new_dx){
         for (int i=0; i<dimension;i++){
             dx[i] += new_dx[i];
         }
     };
 
 
-    void change_dx_prev_vector(vector <float> dx_){
-        for (int i=0; i<dimension;i++){
-            dx_prev[i] += dx_[i];
-        }
+    void change_dx_prev_vector(){
+        for (int i = 0; i < n_count; i++)
+            extra_phi[i] = dx_prev[offset_n + i];
+        for (int i = 0; i < dimension; i++)
+            dx_prev[i] = dx[i];
     };
+
+
+    void increase_delta_t(){
+        delta_t *= 2;
+    }
+
+
+    void decrease_delta_t(){
+        delta_t /= 2;
+    }
+
+
+    void revert_dx(){
+        for (int i = 0; i < dimension; i++)
+            dx[i] = dx_prev[i];
+    }
+
+
+    double get_delta_t(){
+        return delta_t;
+    }
+
+
+    vector<double> get_deviation(){
+        vector<double> res;
+        for (int node = 0; node < n_count; node++){
+            double temp = 0.5 * delta_t * delta_t * abs((dx[offset_n + node] - dx_prev[offset_n + node])/delta_t - 
+                                            (dx_prev[offset_n + node] - extra_phi[node])/prev_delta_t);
+            res.push_back(temp);
+        }
+        return res;
+    }
 
 
     void insert_condensator_matrix(Element condensator, int i){
@@ -227,7 +247,7 @@ public:
         J[offset_u + i][offset_u + i] += 1;
         int start = condensator.getStartNode();
         int end = condensator.getEndNode();
-        float c = condensator.getValue();
+        double c = condensator.getValue();
         if (start != 0){
             J[offset_u + i][offset_n + start - 1] -= 1;
             J[offset_n + start - 1][i] += c;
@@ -241,7 +261,7 @@ public:
     void insert_condensator_vector(Element condensator, int i){
         int start = condensator.getStartNode();
         int end = condensator.getEndNode();
-        float C = condensator.getValue();
+        double C = condensator.getValue();
         I[i] += dx[offset_du + i] - (dx[offset_u + i] - dx_prev[offset_u + i])/delta_t;
 
         if (start != 0 && end != 0){
@@ -283,7 +303,7 @@ public:
     void insert_katushka_vector(Element katushka, int i){
         int start = katushka.getStartNode();
         int end = katushka.getEndNode();
-        float L = katushka.getValue();
+        double L = katushka.getValue();
 
         I[offset_di + i] += dx[offset_di + i] - (dx[offset_i + i] - dx_prev[offset_i + i])/delta_t;
 
@@ -299,7 +319,7 @@ public:
     void insert_resistor_matrix(Element resistor, int i){
         int start = resistor.getStartNode();
         int end = resistor.getEndNode();  
-        float r = resistor.getValue();
+        double r = resistor.getValue();
         if (start != 0) J[offset_n + start - 1][offset_n + start - 1] += 1/r;
         if (end != 0) J[offset_n + end - 1][offset_n + end - 1] += 1/r;
         if (start != 0 && end != 0){
@@ -311,7 +331,7 @@ public:
     void insert_resistor_vector(Element resistor, int i){
         int start = resistor.getStartNode();
         int end = resistor.getEndNode();
-        float R = resistor.getValue();
+        double R = resistor.getValue();
         
         
         if (start != 0 && end != 0){
@@ -345,7 +365,7 @@ public:
     void insert_eds_vector(Element eds, int i){
         int start = eds.getStartNode();
         int end = eds.getEndNode();
-        float E = eds.getValue();
+        double E = eds.getValue();
 
         if (start != 0) {
             I[offset_n + start - 1] += dx[offset_e + i];
@@ -375,7 +395,7 @@ public:
     void insert_id_vector(Element el_id, int i){
         int start = el_id.getStartNode();
         int end = el_id.getEndNode();
-        // float E = eds.getValue();
+        // double E = eds.getValue();
         if (start != 0 && end != 0){
             I[offset_n + start - 1] += (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));
             I[offset_n + end - 1] -= (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));
@@ -388,7 +408,7 @@ public:
     void insert_i_vector(Element el_i, int i){
         int start = el_i.getStartNode();
         int end = el_i.getEndNode();
-        float val = el_i.getValue();
+        double val = el_i.getValue();
 
         if (start != 0) {I[offset_n + start - 1] += val;}
         if (end != 0) {I[offset_n + end - 1] -= val;}
