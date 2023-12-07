@@ -41,8 +41,8 @@ private:
     // dimension of the Jacobian matrix and vectors
     int dimension;
 
-    double delta_t = 0.0001;
-    double prev_delta_t = 0.0001;
+    double delta_t = 0.0000001;
+    double prev_delta_t = 0.0000001;
     // diode parameters
     double It = 2;
     double m = 2;
@@ -93,6 +93,12 @@ public:
             extra_phi.push_back(0);
     }
 
+
+    double E_sin(double A, double t) { 
+        double freq = 2 * M_PI / 0.0001;
+        return A * sin(freq * t);
+    }
+
     void get_elements(){
         for (const auto& elem : elements) {
             cout << "\nElement Type: " << static_cast<int>(elem.getType()) << endl;
@@ -125,7 +131,7 @@ public:
     };
 
 
-    void init_matrix_vector(){
+    void init_matrix_vector(double time){
         for (int i = 0; i < dimension; i++){
             vector<double> temp;
             for (int j = 0; j < dimension; j++)
@@ -144,7 +150,7 @@ public:
         for (int i=0; i<c_count;  i++) {insert_condensator_matrix(el_cond[i], i); insert_condensator_vector(el_cond[i], i);}
         for (int i=0; i<l_count;  i++) {insert_katushka_matrix(el_katush[i], i); insert_katushka_vector(el_katush[i], i);}
         for (int i=0; i<r_count;  i++) {insert_resistor_matrix(el_resist[i], i); insert_resistor_vector(el_resist[i], i);}
-        for (int i=0; i<e_count;  i++) {insert_eds_matrix(el_eds[i], i); insert_eds_vector(el_eds[i], i);}
+        for (int i=0; i<e_count;  i++) {insert_eds_matrix(el_eds[i], i); insert_eds_vector(el_eds[i], i, time);}
         for (int i=0; i<i_count;  i++) {insert_i_vector(el_i[i], i);} // ordinary I
         for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);} // diode I
 
@@ -362,7 +368,7 @@ public:
         }
     };
 
-    void insert_eds_vector(Element eds, int i){
+    void insert_eds_vector(Element eds, int i, double time){
         int start = eds.getStartNode();
         int end = eds.getEndNode();
         double E = eds.getValue();
@@ -374,7 +380,7 @@ public:
             I[offset_n + end - 1] -= dx[offset_e + i];
         }
 
-        if (start != 0 && end != 0){I[offset_e] += (dx[offset_n + start - 1] - dx[offset_n + end - 1]) - E;}
+        if (start != 0 && end != 0){I[offset_e] += (dx[offset_n + start - 1] - dx[offset_n + end - 1]) - E_sin(E, time);}
         if (start != 0 && end == 0){I[offset_e] += dx[offset_n + start - 1] - E;}
         if (start == 0 && end != 0){I[offset_e] += (-dx[offset_n + end - 1]) - E;}
     };
