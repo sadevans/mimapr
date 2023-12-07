@@ -84,13 +84,13 @@ int main() {
     schema->add_element(*id2);
     schema->add_element(*r7);
 
-    schema->init_dx();
+    // schema->init_dx();
 
-    schema->init_matrix_vector(0);
-    cout << 'hi'<<endl;
-    schema->print_matrix();
-    cout << schema->get_dimension() << endl;
-    return 0;
+    // schema->init_matrix_vector(0);
+    // cout << 'hi'<<endl;
+    // schema->print_matrix();
+    // cout << schema->get_dimension() << endl;
+    // return 0;
     
 
 
@@ -112,10 +112,10 @@ int main() {
 
 
 
-    schema->get_elements();
+    // schema->get_elements();
 
-    cout << schema->getNCount() << endl;
-    schema->getCounts();
+    // cout << schema->getNCount() << endl;
+    // schema->getCounts();
 
     // schema->init_matrix_vector();
     // cout << schema->get_dimension() << endl;
@@ -123,7 +123,7 @@ int main() {
     // cout << endl;
     // schema->print_vector();
     
-    // Solver* solver = new Solver(schema);
-    // solver->point_method();
+    Solver* solver = new Solver(schema);
+    solver->point_method();
     return 0;
 }

@@ -131,14 +131,29 @@ public:
     };
 
 
-    void init_matrix_vector(double time){
+    void reset_matrix_vector(){
         for (int i = 0; i < dimension; i++){
-            vector<double> temp;
-            for (int j = 0; j < dimension; j++)
-                temp.push_back(0);
-            J.push_back(temp);
-            I.push_back(0);
+            for (int j = 0; j < dimension; j++){
+                J[i][j] = 0;
+            }
+            I[i] = 0;
         }
+    };
+
+    void init_matrix_vector(double time){
+        cout << "size: " << J.size() << endl;
+        if (J.size() == 0 && I.size() == 0){
+            cout << "here" << endl;
+            for (int i = 0; i < dimension; i++){
+                vector<double> temp;
+                for (int j = 0; j < dimension; j++)
+                    temp.push_back(0);
+                J.push_back(temp);
+                I.push_back(0);
+            }
+        }
+        else reset_matrix_vector();
+
 
         offset_du = 0;
         offset_di = c_count;
@@ -154,7 +169,7 @@ public:
         for (int i=0; i<i_count;  i++) {insert_i_vector(el_i[i], i);} // ordinary I
         for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);} // diode I
 
-    // make -I
+        // make -I
         minus_vector();
     };
 
@@ -162,7 +177,7 @@ public:
         for (int i = 0; i < dimension; i++) {
             I[i] *= -1;
         }
-    }
+    };
 
     void print_matrix(){
         cout << "Jacobian matrix:" << endl;
@@ -217,23 +232,23 @@ public:
 
     void increase_delta_t(){
         delta_t *= 2;
-    }
+    };
 
 
     void decrease_delta_t(){
         delta_t /= 2;
-    }
+    };
 
 
     void revert_dx(){
         for (int i = 0; i < dimension; i++)
             dx[i] = dx_prev[i];
-    }
+    };
 
 
     double get_delta_t(){
         return delta_t;
-    }
+    };
 
 
     vector<double> get_deviation(){

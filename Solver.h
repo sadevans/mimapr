@@ -78,7 +78,7 @@ public:
             bool newton_convergence = true;
             while (newton_convergence){
                 schema->init_matrix_vector(time);
-                //schema->print_matrix();
+                schema->print_matrix();
                 //schema->print_vector();
                 //cout << time << endl;
                 // return;
