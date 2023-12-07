@@ -57,11 +57,11 @@ int main() {
     Element* r4 = new Element(ElementType::R, 2, 6, 20, "R4", false);
     Element* r5 = new Element(ElementType::R, 6, 3, 1000000, "R5", false);
 
-    Element* c2 = new Element(ElementType::C, 6, 3, 2, "C2", false);
+    Element* c2 = new Element(ElementType::C, 6, 3, 2e-12, "C2", false);
     Element* id1 = new Element(ElementType::Id, 6, 3, 2, "Id1", false);
     Element* e3 = new Element(ElementType::E, 0, 4, 5, "E3", false);
     
-    Element* c3 = new Element(ElementType::C, 7, 2, 2, "C3", false);
+    Element* c3 = new Element(ElementType::C, 7, 2, 2e-12, "C3", false);
     Element* r6 = new Element(ElementType::R, 7, 2, 1000000, "R6", false);
     Element* id2 = new Element(ElementType::Id, 7, 2, 2, "Id2", false);
 

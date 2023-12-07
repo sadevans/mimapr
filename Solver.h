@@ -78,7 +78,9 @@ public:
             bool newton_convergence = true;
             while (newton_convergence){
                 schema->init_matrix_vector(time);
+                if (counter < 5)
                 schema->print_matrix();
+                counter ++;
                 //schema->print_vector();
                 //cout << time << endl;
                 // return;
@@ -104,7 +106,7 @@ public:
                         schema->revert_dx();
                     }
                 }
-                counter ++;
+               
                 cout << counter << " " << newton_iteration << endl;; 
             }
 

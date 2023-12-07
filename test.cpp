@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <iostream>
+#include <iomanip>
 #define TK 1e-3    // Время расчета
 #define TST 1e-7   // Начальный шаг
 #define TMX 1e-6   // Масимальный шаг
@@ -17,7 +18,7 @@ const int dim = 18;   // Размерность
 // Параметры системы 
 const double It = 1e-12;
 const double E2 = 5.0, E3 = 5.0; 
-const double C1 = 1e-6;
+const double C1 = 1;
 const double C2 = 2e-12, C3 = 2e-12;
 const double L = 0.1;
 const double R1 = 1000.0, R3 = 1000.0;
@@ -212,9 +213,18 @@ double UC1_prev, double UC2_prev, double UC3_prev, double IL_prev) {
     vector[17] = -phi_4 - E3;
 }
 
+
+void print_matrix(){
+    for (int i = 0; i < dim; i++){
+        for (int j = 0; j < dim; j++)
+            cout <<setw(6)<< matrix[i * dim + j] << "  ";
+        cout << endl;
+    }
+    cout << endl << endl;
+}
 int main() {
     FILE * f1 = fopen("out.txt", "w");
-
+    int c = 0;
     double step_t = TST;      // Шаг по времени
     double step_t_prev = step_t;    // Предыдущий шаг по времени
     double dev_max = ACR;    // Максимальное отклонение
@@ -246,7 +256,9 @@ int main() {
             init_vector(step_t, time, dUC1, dUC2, dUC3, dIL, UC1, UC2, UC3, IL, phi_1, phi_2, phi_3, phi_4, phi_5, phi_6, phi_7, IE1, IE2, IE3,
              UC1_prev, UC2_prev, UC3_prev, IL_prev);
             minus_vector();
-
+            if (c<5)
+                print_matrix();
+            c++;
             Gauss();
 
             dUC1 += vector[0];

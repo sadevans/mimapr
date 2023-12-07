@@ -44,8 +44,8 @@ private:
     double delta_t = 0.0000001;
     double prev_delta_t = 0.0000001;
     // diode parameters
-    double It = 2;
-    double m = 2;
+    double It = 2e-12;
+    double m = 0.026;
     double phi_t = 1;
 
     vector<double> I;
@@ -183,7 +183,7 @@ public:
         cout << "Jacobian matrix:" << endl;
         for (int i=0; i<dimension; i++){
             for (int j=0; j<dimension; j++){
-                cout << setw(6) << J[i][j] << " ";
+                cout << setw(6) << J[i][j] << "  ";
             }
             cout << endl;
         }
