@@ -373,13 +373,15 @@ public:
     void insert_eds_matrix(Element eds, int i){
         int start = eds.getStartNode();
         int end = eds.getEndNode();
+        cout<< eds.getName() << " "<<endl;
+        cout << "eds matrix " << start << end << endl;
         if (start != 0) {
-            J[offset_n + start - 1][offset_e] += 1;
-            J[offset_e][offset_n + start - 1] += 1;
+            J[offset_n + start - 1][offset_e + i] += 1;
+            J[offset_e + i][offset_n + start - 1] += 1;
         }
         if (end != 0) {
-            J[offset_n + end - 1][offset_e] -= 1;
-            J[offset_e][offset_n + end - 1] -= 1;
+            J[offset_n + end - 1][offset_e + i] -= 1;
+            J[offset_e + i][offset_n + end - 1] -= 1;
         }
     };
 
