@@ -13,10 +13,11 @@ private:
     int endNode;
     float value;
     std::string name;
+    bool isSin;
 
 public:
-    Element(ElementType elementType, int start, int end, double val, const std::string& elemName)
-        : type(elementType), startNode(start), endNode(end), value(val), name(elemName) {}
+    Element(ElementType elementType, int start, int end, double val, const std::string& elemName, bool isSinelem)
+        : type(elementType), startNode(start), endNode(end), value(val), name(elemName), isSin(isSinelem) {}
 
     ElementType getType() const {
         return type;
@@ -25,6 +26,10 @@ public:
 
     int getStartNode() const {
         return startNode;
+    }
+
+    bool getIsSin() const {
+        return isSin;
     }
 
 

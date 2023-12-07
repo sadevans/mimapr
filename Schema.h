@@ -380,9 +380,18 @@ public:
             I[offset_n + end - 1] -= dx[offset_e + i];
         }
 
-        if (start != 0 && end != 0){I[offset_e] += (dx[offset_n + start - 1] - dx[offset_n + end - 1]) - E_sin(E, time);}
-        if (start != 0 && end == 0){I[offset_e] += dx[offset_n + start - 1] - E;}
-        if (start == 0 && end != 0){I[offset_e] += (-dx[offset_n + end - 1]) - E;}
+        if (eds.getIsSin()){
+            if (start != 0 && end != 0){I[offset_e] += (dx[offset_n + start - 1] - dx[offset_n + end - 1]) - E_sin(E, time);}
+            if (start != 0 && end == 0){I[offset_e] += dx[offset_n + start - 1] - E_sin(E, time);}
+            if (start == 0 && end != 0){I[offset_e] += (-dx[offset_n + end - 1]) - E_sin(E, time);}
+        }
+
+        else{
+            if (start != 0 && end != 0){I[offset_e] += (dx[offset_n + start - 1] - dx[offset_n + end - 1]) - E;}
+            if (start != 0 && end == 0){I[offset_e] += dx[offset_n + start - 1] - E;}
+            if (start == 0 && end != 0){I[offset_e] += (-dx[offset_n + end - 1]) - E;}
+
+        }
     };
 
 
