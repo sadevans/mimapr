@@ -44,9 +44,8 @@ private:
     double delta_t = 0.0000001;
     double prev_delta_t = 0.0000001;
     // diode parameters
-    double It = 2;
-    double m = 2;
-    double phi_t = 1;
+    double It = 1e-12;
+    double m_phit = 0.026;
 
     vector<double> I;
     vector<vector<double>> J;
@@ -95,7 +94,7 @@ public:
 
 
     double E_sin(double A, double t) { 
-        double freq = 2 * M_PI / 0.0001;
+        double freq = 2 * M_PI / 1;
         return A * sin(freq * t);
     }
 
@@ -110,7 +109,9 @@ public:
         cout << endl;
     };
 
-
+    int get_n_offset() {
+        return offset_n;
+    }
     int getNCount() const {
         return n_count;
     };
@@ -141,9 +142,7 @@ public:
     };
 
     void init_matrix_vector(double time){
-        cout << "size: " << J.size() << endl;
         if (J.size() == 0 && I.size() == 0){
-            cout << "here" << endl;
             for (int i = 0; i < dimension; i++){
                 vector<double> temp;
                 for (int j = 0; j < dimension; j++)
@@ -229,6 +228,9 @@ public:
             dx_prev[i] = dx[i];
     };
 
+    double get_dx_elem(int i){
+        return dx[i];
+    }
 
     void increase_delta_t(){
         delta_t *= 2;
@@ -373,8 +375,8 @@ public:
     void insert_eds_matrix(Element eds, int i){
         int start = eds.getStartNode();
         int end = eds.getEndNode();
-        cout<< eds.getName() << " "<<endl;
-        cout << "eds matrix " << start << end << endl;
+        // cout<< eds.getName() << " "<<endl;
+        // cout << "eds matrix " << start << end << endl;
         if (start != 0) {
             J[offset_n + start - 1][offset_e + i] += 1;
             J[offset_e + i][offset_n + start - 1] += 1;
@@ -416,11 +418,11 @@ public:
         int start = el_id.getStartNode();
         int end = el_id.getEndNode();
 
-        if (start != 0) {J[offset_n + start - 1][offset_n + start - 1] += (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);}
-        if (end != 0) {J[offset_n + end - 1][offset_n + end - 1] += (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);}
+        if (start != 0) {J[offset_n + start - 1][offset_n + start - 1] += (It * exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m_phit)))/(m_phit);}
+        if (end != 0) {J[offset_n + end - 1][offset_n + end - 1] += (It * exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m_phit)))/(m_phit);}
         if (start != 0 && end != 0){
-            J[offset_n + end - 1][offset_n + start - 1] -= (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);
-            J[offset_n + start - 1][offset_n + end - 1] -= (It*exp(dx[offset_n + start-1] - dx[offset_n + end -1]))/(m*phi_t);
+            J[offset_n + end - 1][offset_n + start - 1] -= (It * exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m_phit)))/(m_phit);
+            J[offset_n + start - 1][offset_n + end - 1] -= (It * exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m_phit)))/(m_phit);
         } 
     };
 
@@ -429,12 +431,12 @@ public:
         int end = el_id.getEndNode();
         // double E = eds.getValue();
         if (start != 0 && end != 0){
-            I[offset_n + start - 1] += (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));
-            I[offset_n + end - 1] -= (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));
+            I[offset_n + start - 1] += (It*(exp((dx[offset_n + start - 1] - dx[offset_n + end - 1])/(m_phit)) - 1));
+            I[offset_n + end - 1] -= (It*(exp((dx[offset_n + start - 1] - dx[offset_n + end - 1])/(m_phit)) - 1));
 
             }
-        if (start != 0 && end == 0){I[offset_n + start - 1] += (It*(exp((dx[offset_n + start-1])/(m*phi_t)) - 1));}
-        if (start == 0 && end != 0){I[offset_n + end - 1] -= (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m*phi_t)) - 1));}
+        if (start != 0 && end == 0){I[offset_n + start - 1] += (It*(exp((dx[offset_n + start-1])/(m_phit)) - 1));}
+        if (start == 0 && end != 0){I[offset_n + end - 1] -= (It*(exp((dx[offset_n + start-1] - dx[offset_n + end -1])/(m_phit)) - 1));}
     };
 
     void insert_i_vector(Element el_i, int i){
