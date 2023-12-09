@@ -9,7 +9,7 @@
 
 ## Добавление нового элемента
 
-Добавить новый элемент необходимо в файле [main] ([http://webdesign.ru.net адрес ссылки - невидимая часть](https://github.com/sadevans/mimapr/blob/main/main.cpp))
+Добавить новый элемент необходимо в файле [main]([http://webdesign.ru.net адрес ссылки - невидимая часть](https://github.com/sadevans/mimapr/blob/main/main.cpp))
 
 
 Добавление осуществляется по шаблону
