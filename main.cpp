@@ -51,5 +51,6 @@ int main() {
     FILE * f1 = fopen("out.txt", "w");
     solver->point_method(f1);
     fclose(f1);
+    system("python plotter.py");
     return 0;
 }
