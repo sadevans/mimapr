@@ -17,6 +17,7 @@
 Element* el = new Element(ElementType::type, start node, end node, value, "name");
 ```
 
+### Элементы типа E - ЭДС
 Для элементов типа `E` можно указать наличие синусоидального источника с помощью флага **true** или **false**. 
 
 По умолчанию флаг установлен в **false**.
@@ -26,6 +27,7 @@ Element* el = new Element(ElementType::type, start node, end node, value, "name"
 Element* e1 = new Element(ElementType::E, 1, 0, 1, "E1", true);
 ```
 
+### Элементы типа Id - ток диода
 Для элементов типа `Id` можно задать параметры диода: $I_t$ и $m \cdot phit_t$. 
 
 По умолчанию $I_t = 1e^{-12}$ и $m \cdot phit_t = 0.026$.
