@@ -9,7 +9,7 @@
 
 ## Добавление нового элемента
 
-Добавить новый элемент необходимо в файле ([main](https://github.com/sadevans/mimapr/blob/main/main.cpp))
+Добавить новый элемент необходимо в файле [main](https://github.com/sadevans/mimapr/blob/main/main.cpp)
 
 
 Добавление осуществляется по шаблону
