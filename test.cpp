@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <iomanip>
 #include <math.h>
 #include <iostream>
 #define TK 1e-3    // Время расчета
@@ -28,7 +29,7 @@ const double Mft = 0.026;
  
 
 //Метод Гаусса для решения СЛАУ
-void Gauss() { 
+void Gauss(int counter) { 
     long int i, j, k;
     int N = dim;
     double diagonalElement;
@@ -44,9 +45,44 @@ void Gauss() {
             vector[i] -= vector[k] * diagonalElement;
         }
     }
-    for (i = N - 2; i >= 0; i--) //Обратный ход
+    // if (counter < 2){
+    //         cout<<"I in gauss: ";
+    //         for (i = 0; i < N; i++)
+    //             cout << setw(6) << vector[i] << " ";
+    //         cout << endl << endl;
+    //         cout << "matrix in gauss: "<<endl;
+    //             for (int i = 0; i < dim; i++){
+    //     for (int j = 0; j < dim; j++)
+    //         cout <<setw(6)<< matrix[i * dim + j] << " ";
+    //     cout << endl;
+    // }
+    // }
+
+    for (i = N - 2; i >= 0; i--) {//Обратный ход
+    //if (counter < 2) cout<<"i"<<i;
         for (j = i + 1; j < N; j++)
             vector[i] -= matrix[N * i + j] * vector[j];
+
+        // if (counter < 2){
+        //     cout<<"I in gauss2: ";
+        //     for (k = 0; k < N; k++)
+        //         cout << setw(6) << vector[k] << " ";
+        //     cout << endl << endl;
+        // }
+    }
+
+    //     if (counter < 2){
+    //         cout<<"I in gauss2: ";
+    //         for (i = 0; i < N; i++)
+    //             cout << setw(6) << vector[i] << " ";
+    //         cout << endl << endl;
+    //         cout << "matrix in gauss2: "<<endl;
+    //             for (int i = 0; i < dim; i++){
+    //     for (int j = 0; j < dim; j++)
+    //         cout <<setw(6)<< matrix[i * dim + j] << " ";
+    //     cout << endl;
+    // }
+    // }
 }
 
 //Функция синусоидального источника
@@ -164,7 +200,7 @@ void init_matrix(double dt, double phi_2, double phi_3, double phi_6,  double ph
 }
 
 // Заполнение вектора невязок
-void init_vector(double dt, double time, double dUC1, double dUC2, 
+void init_vector(int counter,double dt, double time, double dUC1, double dUC2, 
 double dUC3, double dIL, double UC1, double UC2, double UC3, double IL,
 double phi_1, double phi_2, double phi_3, double phi_4, double phi_5, 
 double phi_6,  double phi_7, double IE1, double IE2, double IE3, 
@@ -197,7 +233,8 @@ double UC1_prev, double UC2_prev, double UC3_prev, double IL_prev) {
 
     //phi_5
     vector[12] = -IL + C1*dUC1 + phi_5/R3 - (phi_2-phi_5)/R2;
-
+    if (counter <2)
+    cout << "here::: " << C1*dUC1 <<" "<< -IL<<" " << phi_5/R3 <<" "<< (phi_2-phi_5)/R2<<endl;
     // phi_6
     vector[13] = (phi_6-phi_3)/R5 + It * (exp((phi_6 - phi_3) / Mft) - 1)
     - (phi_2-phi_6)/R4 + C2*dUC2;
@@ -212,6 +249,18 @@ double UC1_prev, double UC2_prev, double UC3_prev, double IL_prev) {
     vector[17] = -phi_4 - E3;
 }
 
+void print_matrix(){
+    for (int i = 0; i < dim; i++){
+        for (int j = 0; j < dim; j++)
+            cout << setprecision(12) <<setw(6)<< matrix[i * dim + j] << " ";
+        cout << endl;
+    }
+    cout << endl << endl<<"vector ";
+    for (int i = 0; i < dim; i++){
+        cout << setw(6)<<vector[i]<< " ";
+    }
+    cout << endl << endl;
+}
 int main() {
     FILE * f1 = fopen("out.txt", "w");
 
@@ -243,12 +292,23 @@ int main() {
         while (flag) {  // Выполнение итераций метода Ньютона
             Reset(); //Обнуление
             init_matrix(step_t, phi_2, phi_3,phi_6, phi_7); 
-            init_vector(step_t, time, dUC1, dUC2, dUC3, dIL, UC1, UC2, UC3, IL, phi_1, phi_2, phi_3, phi_4, phi_5, phi_6, phi_7, IE1, IE2, IE3,
+            init_vector(counter, step_t, time, dUC1, dUC2, dUC3, dIL, UC1, UC2, UC3, IL, phi_1, phi_2, phi_3, phi_4, phi_5, phi_6, phi_7, IE1, IE2, IE3,
              UC1_prev, UC2_prev, UC3_prev, IL_prev);
+
             minus_vector();
+                         if (counter<2){
+                            cout << "NI "<< iteration << endl;
+            print_matrix();
 
-            Gauss();
-
+            cout << endl << endl;}
+            Gauss(counter);
+            if (counter<2){
+            
+            cout << endl << endl<<"vector after gauss:  ";
+            for (int i = 0; i < dim; i++){
+                cout << setw(6)<<vector[i]<< " ";
+            }
+            cout << endl<< endl;}
             dUC1 += vector[0];
             dUC2 += vector[1];
             dUC3 += vector[2];
@@ -357,12 +417,9 @@ int main() {
             time += step_t;
             counter++;
 
-            if (dev_cur < dev_min){ // Точность выше требуемой, увеличение шага
+            if (dev_cur < dev_min)
                 step_t *= 2.0;
-                cout << "i am here" << endl;
-            }
-        //if (counter < 1000)
-        //printf("%d %d %15.10f\n", counter, iteration, step_t);
+
         }
 
     }

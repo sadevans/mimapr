@@ -11,7 +11,7 @@ private:
     ElementType type;
     int startNode;
     int endNode;
-    float value;
+    double value;
     std::string name;
     bool isSin;
 

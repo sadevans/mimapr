@@ -41,8 +41,8 @@ private:
     // dimension of the Jacobian matrix and vectors
     int dimension;
 
-    double delta_t = 0.0000001;
-    double prev_delta_t = 0.0000001;
+    double delta_t = 0.0001;
+    double prev_delta_t = 0.0001;
     // diode parameters
     double It = 1e-12;
     double m_phit = 0.026;
@@ -168,7 +168,6 @@ public:
         for (int i=0; i<i_count;  i++) {insert_i_vector(el_i[i], i);} // ordinary I
         for (int i=0; i<id_count; i++) {insert_id_matrix(el_id[i], i); insert_id_vector(el_id[i], i);} // diode I
 
-        // make -I
         minus_vector();
     };
 
@@ -182,7 +181,7 @@ public:
         cout << "Jacobian matrix:" << endl;
         for (int i=0; i<dimension; i++){
             for (int j=0; j<dimension; j++){
-                cout << setw(6) << J[i][j] << " ";
+                cout << setprecision(12)<<setw(6) << J[i][j] << " ";
             }
             cout << endl;
         }
@@ -190,8 +189,9 @@ public:
     };
 
     void print_vector(){
+        cout << "vector ";
         for (int i=0; i<dimension; i++)
-            cout << I[i] << " ";
+            cout <<setw(6)<< I[i] << " ";
         cout << endl;
         cout << endl;
 
@@ -334,8 +334,8 @@ public:
         if (start != 0 && end == 0){I[offset_i + i] += L*dx[offset_di + i] - (dx[offset_n + start -1]);}
         if (start == 0 && end != 0){I[offset_i + i] += L*dx[offset_di + i] - (-dx[offset_n + end - 1]);}
 
-        if (start != 0) {I[offset_n + start - 1] += dx[offset_di + i];}
-        if (end != 0) {I[offset_n + end - 1] -= dx[offset_di + i];}
+        if (start != 0) {I[offset_n + start - 1] += dx[offset_i + i];}
+        if (end != 0) {I[offset_n + end - 1] -= dx[offset_i + i];}
     };
 
 
@@ -375,8 +375,6 @@ public:
     void insert_eds_matrix(Element eds, int i){
         int start = eds.getStartNode();
         int end = eds.getEndNode();
-        // cout<< eds.getName() << " "<<endl;
-        // cout << "eds matrix " << start << end << endl;
         if (start != 0) {
             J[offset_n + start - 1][offset_e + i] += 1;
             J[offset_e + i][offset_n + start - 1] += 1;

@@ -22,8 +22,11 @@ with open("out.txt") as my_file:
 
 cmap = get_cmap(30)
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
-for i in range(count):
-    ax.plot(t, phi[i], linewidth=1, color=cmap(i))
+#for i in range(count):
+ax.plot(t, phi[4], linewidth=1, color="blue")
+#ax.plot(t, phi[3], linewidth=1, color="green")
+#ax.plot(t, phi[1], linewidth=1, color="red")
+#ax.plot(t, phi[0], linewidth=1, color="black")
 ax.grid()
 ax.set_xlabel("t", fontsize=20)
 ax.set_ylabel("phi_1", fontsize=20)
