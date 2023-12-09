@@ -11,10 +11,19 @@
 
 Добавить новый элемент необходимо в файле [main](https://github.com/sadevans/mimapr/blob/main/main.cpp)
 
+### Типы элементов
+В программе можно добавить элементы типа:
+- E - ЭДС,
+- C - конденсатор,
+- R - резистор,
+- L - катушка,
+- I - источник тока,
+- Id - ток диода.
 
 Добавление осуществляется по шаблону
 ```cpp
 Element* el = new Element(ElementType::type, start node, end node, value, "name");
+schema->add_element(*el);
 ```
 
 ### Элементы типа E - ЭДС
