@@ -41,8 +41,8 @@ private:
     // dimension of the Jacobian matrix and vectors
     int dimension;
 
-    double delta_t = 0.0001;
-    double prev_delta_t = 0.0001;
+    double delta_t;
+    double prev_delta_t;
     // diode parameters
     double It = 1e-12;
     double m_phit = 0.026;
@@ -141,7 +141,15 @@ public:
         }
     };
 
-    void init_matrix_vector(double time){
+
+    void init_delta_t(double delta_t_){
+        prev_delta_t = delta_t;
+        delta_t = delta_t_;
+    };
+
+
+    void init_matrix_vector(double time, double delta_t_){
+        init_delta_t(delta_t_);
         if (J.size() == 0 && I.size() == 0){
             for (int i = 0; i < dimension; i++){
                 vector<double> temp;
@@ -427,6 +435,9 @@ public:
     void insert_id_vector(Element el_id, int i){
         int start = el_id.getStartNode();
         int end = el_id.getEndNode();
+        double It = el_id.getIt();
+        double m_phit = el_id.getMphit();
+
         // double E = eds.getValue();
         if (start != 0 && end != 0){
             I[offset_n + start - 1] += (It*(exp((dx[offset_n + start - 1] - dx[offset_n + end - 1])/(m_phit)) - 1));

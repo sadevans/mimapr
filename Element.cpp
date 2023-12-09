@@ -18,6 +18,7 @@ int main() {
         int startNode, endNode;
         float value;
         string name;
+        bool isSin;
 
         cout << "Enter element type (E, C, R, L, I): ";
         getline(cin, input);
@@ -47,7 +48,7 @@ int main() {
         cout << "Enter element name: ";
         getline(cin, name);
 
-        Element element(elementType, startNode, endNode, value, name);
+        Element element(elementType, startNode, endNode, value, name, isSin);
         elements.push_back(element); // запись в вектор всех элементов
     }
 

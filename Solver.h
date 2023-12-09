@@ -70,7 +70,7 @@ public:
             int newton_iteration = 0;
             bool newton_convergence = true;
             while (newton_convergence){
-                schema->init_matrix_vector(time);            
+                schema->init_matrix_vector(time, start_t);            
                 vector<double> new_dx = gauss(counter);          
                 schema->change_dx_vector(new_dx);
                 newton_iteration += 1;

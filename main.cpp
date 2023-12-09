@@ -14,20 +14,20 @@ int main() {
 
     Element* e1 = new Element(ElementType::E, 1, 0, 1, "E1", true);
 
-    Element* c1 = new Element(ElementType::C, 1, 3, 1e-6, "C1", false);
-    Element* rb1 = new Element(ElementType::R, 0, 2, 20, "Rb1", false);
-    Element* ru1 = new Element(ElementType::R, 2, 3, 1e6, "Ru1", false);
-    Element* cb1 = new Element(ElementType::C, 2, 3, 2e-12, "Cb1", false);
-    Element* id1 = new Element(ElementType::Id, 2, 3, 1, "Id1", false);
+    Element* c1 = new Element(ElementType::C, 1, 3, 1e-6, "C1");
+    Element* rb1 = new Element(ElementType::R, 0, 2, 20, "Rb1");
+    Element* ru1 = new Element(ElementType::R, 2, 3, 1e6, "Ru1");
+    Element* cb1 = new Element(ElementType::C, 2, 3, 2e-12, "Cb1");
+    Element* id1 = new Element(ElementType::Id, 2, 3, 1, "Id1");
 
-    Element* rb2 = new Element(ElementType::R, 3, 4, 20, "Rb2", false);
-    Element* ru2 = new Element(ElementType::R, 4, 5, 1e6, "Ru2", false);
-    Element* cb2 = new Element(ElementType::C, 4, 5, 2e-12, "Cb2", false);
-    Element* id2 = new Element(ElementType::Id, 4, 5, 1, "Id2", false);
+    Element* rb2 = new Element(ElementType::R, 3, 4, 20, "Rb2");
+    Element* ru2 = new Element(ElementType::R, 4, 5, 1e6, "Ru2");
+    Element* cb2 = new Element(ElementType::C, 4, 5, 2e-12, "Cb2");
+    Element* id2 = new Element(ElementType::Id, 4, 5, 1, "Id2");
 
-    Element* c2 = new Element(ElementType::C, 0, 5, 1e-6, "C2", false);
-    Element* r2 = new Element(ElementType::R, 0, 5, 1e3, "R2", false);
-    Element* l1 = new Element(ElementType::L, 0, 5, 2.53e-4, "L1", false);
+    Element* c2 = new Element(ElementType::C, 0, 5, 1e-6, "C2");
+    Element* r2 = new Element(ElementType::R, 0, 5, 1e3, "R2");
+    Element* l1 = new Element(ElementType::L, 0, 5, 2.53e-4, "L1");
 
     schema->add_element(*e1);
 
