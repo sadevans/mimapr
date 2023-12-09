@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <valarray>
 #include "Element.h"
 using namespace std;
 
@@ -195,6 +196,7 @@ public:
         }
         cout << endl;
     };
+
 
     void print_vector(){
         cout << "vector ";
