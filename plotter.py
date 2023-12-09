@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
-def get_cmap(n, name='hsv'):
-    '''Returns a function that maps each index in 0, 1, ..., n-1 to a distinct 
-    RGB color; the keyword argument name must be a standard mpl colormap name.'''
-    return plt.cm.get_cmap(name, n)
+
 t = []
 phi = []
 count = 0
@@ -20,14 +17,14 @@ with open("out.txt") as my_file:
         for i in range(1, len(a)):
             phi[i-1].append(float(a[i]))
 
-cmap = get_cmap(30)
 fig, ax = plt.subplots(1, 1, figsize=(10, 10))
 #for i in range(count):
-ax.plot(t, phi[4], linewidth=1, color="blue")
-#ax.plot(t, phi[3], linewidth=1, color="green")
-#ax.plot(t, phi[1], linewidth=1, color="red")
-#ax.plot(t, phi[0], linewidth=1, color="black")
+# ax.plot(t, phi[0], linewidth=1, label = r'$\phi_1$', color="purple")
+# ax.plot(t, phi[2], linewidth=1, label = r'$\phi_3$', color="blue")
+ax.plot(t, phi[4], linewidth=1, label = r'$\phi_5$', color="red")
+
 ax.grid()
+ax.legend()
 ax.set_xlabel("t", fontsize=20)
-ax.set_ylabel("phi_1", fontsize=20)
+ax.set_ylabel("phi", fontsize=20)
 plt.show()
