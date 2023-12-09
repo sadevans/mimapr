@@ -9,6 +9,20 @@
 
 ## Добавление нового элемента
 
+Добавить новый элемент необходимо в файле [main] ([http://webdesign.ru.net адрес ссылки - невидимая часть](https://github.com/sadevans/mimapr/blob/main/main.cpp))
+
+
+Добавление осуществляется по шаблону
+```cpp
+Element* el = new Element(ElementType::type, start node, end node, value, "name");
+```
+
+Для элементов типа `E` можно указать наличие синусоидального источника с помощью флага **true** или **false**. По умолчанию флаг установлен в **false**.
+
+Для элементов типа `Id` можно задать параметры диода: $I_t$ и $m \cdot phit_t$. По умолчанию $I_t = 1e^{-12}$ и $m \cdot phit_t = 0.026$.
+
+
+
 Сначала необходимо ввести тип элемента: (E, C, R, L, I)
 ```cpp
 Enter elements one by one with their characteristics.
