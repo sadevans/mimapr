@@ -38,4 +38,4 @@
 # Element
 .vscode
 venv
-test
+/test

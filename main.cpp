@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
-#include "Solver.h"
+#include "src/Solver.h"
 using namespace std;
 
 
