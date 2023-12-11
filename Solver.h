@@ -21,8 +21,8 @@ private:
     double t;
 public:
     Solver(Schema* _schema, int _n_max = 7, double _epsilon = 1e-2, 
-        double _start_t = 1e-4, double _min_t = 1e-9, 
-        double _max_t = 1e-2, double _t = 5):
+        double _start_t = 1e-7, double _min_t = 1e-9, 
+        double _max_t = 1e-2, double _t = 1e-3):
     schema(_schema), n_max(_n_max), epsilon(_epsilon), start_t(_start_t), min_t(_min_t), max_t(_max_t), t(_t){};
 
     double max_elem(vector<double> vect, int dim) {

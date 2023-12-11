@@ -41,8 +41,8 @@ private:
     // dimension of the Jacobian matrix and vectors
     int dimension;
 
-    double delta_t = 0.0001;
-    double prev_delta_t = 0.0001;
+    double delta_t = 0.0000001;
+    double prev_delta_t = 0.0000001;
     // diode parameters
     double It = 1e-12;
     double m_phit = 0.026;
@@ -94,7 +94,7 @@ public:
 
 
     double E_sin(double A, double t) { 
-        double freq = 2 * M_PI / 1;
+        double freq = 2 * M_PI / (1e-4);
         return A * sin(freq * t);
     }
 
