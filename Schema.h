@@ -258,6 +258,8 @@ public:
         for (int node = 0; node < n_count; node++){
             double temp = 0.5 * delta_t * delta_t * abs((dx[offset_n + node] - dx_prev[offset_n + node])/delta_t - 
                                             (dx_prev[offset_n + node] - extra_phi[node])/prev_delta_t);
+            //double temp = abs((dx[offset_n + node] - dx_prev[offset_n + node]))/delta_t; 
+            //                 
             res.push_back(temp);
         }
         return res;
