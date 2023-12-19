@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/mimapr.dir/lab.cpp.o -o mimapr 

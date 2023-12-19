@@ -21,7 +21,7 @@ private:
     double t;
 public:
     Solver(Schema* _schema, int _n_max = 7, double _epsilon = 1e-2, 
-        double _start_t = 1e-7, double _min_t = 1e-9, 
+        double _start_t = 1e-7, double _min_t = 1e-15, 
         double _max_t = 1e-2, double _t = 1e-3):
     schema(_schema), n_max(_n_max), epsilon(_epsilon), start_t(_start_t), min_t(_min_t), max_t(_max_t), t(_t){};
 
@@ -66,6 +66,7 @@ public:
         double time = 0;
         int counter = 0;
         schema->init_dx();
+        double max_elem1;
         while (time < t){
             int newton_iteration = 0;
             bool newton_convergence = true;
@@ -74,7 +75,7 @@ public:
                 vector<double> new_dx = gauss(counter);          
                 schema->change_dx_vector(new_dx);
                 newton_iteration += 1;
-                double max_elem1 = max_elem(new_dx, schema->get_dimension());
+                max_elem1= max_elem(new_dx, schema->get_dimension());
                 if (max_elem1 < epsilon){
                     newton_convergence = false;
                 }   
@@ -84,6 +85,7 @@ public:
                         newton_iteration = 0;
                         schema->decrease_delta_t();
                         if (schema->get_delta_t() < min_t){
+                            cout << "i am here" << endl;
                             cout << "delta t is to small, not possible to solve. Program exit." << endl;
                             exit(0);
                         }
@@ -95,7 +97,7 @@ public:
 
             vector<double> deviations = schema->get_deviation();
             //if (*max_element(deviations.begin(), deviations.end()) < min_t){
-            if(deviations[0] < min_t){
+            if(max_elem1 < min_t){
 
                     time += schema->get_delta_t();
                     schema->increase_delta_t();
@@ -107,7 +109,7 @@ public:
             }
             else
                 //if(*max_element(deviations.begin(), deviations.end()) < max_t && *min_element(deviations.begin(), deviations.end()) > min_t){
-                if(deviations[0] < max_t && deviations[0] > min_t){
+                if(max_elem1 < max_t && max_elem1 > min_t){
                     time += schema->get_delta_t();
                     schema->change_dx_prev_vector();
                     fprintf(file, "%9.12f ", time);

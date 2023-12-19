@@ -1,0 +1,3 @@
+/home/n1shko/hw/mimapr/CMakeFiles/mimapr.dir
+/home/n1shko/hw/mimapr/CMakeFiles/edit_cache.dir
+/home/n1shko/hw/mimapr/CMakeFiles/rebuild_cache.dir
